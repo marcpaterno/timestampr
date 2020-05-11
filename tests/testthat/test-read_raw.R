@@ -1,0 +1,22 @@
+test_that("reading empty file works", {
+  d <- read_raw("empty_001.dat")
+  expect_s3_class(d, "data.frame")
+  expect_length(d, 4L)
+  expect_named(d, c("ts", "data", "step", "rank"))
+  expect_type(d$ts, "double")
+  expect_type(d$step, "character")
+  expect_type(d$rank, "integer")
+  expect_equal(nrow(d), 0L)
+})
+
+test_that("reading normal files works", {
+  d <- read_raw("timing_992_7056_100.dat.xz")
+  expect_s3_class(d, "data.frame")
+  expect_length(d, 4)
+  expect_named(d, c("ts", "data", "step", "rank"))
+  expect_type(d$ts, "double")
+  expect_type(d$step, "character")
+  expect_type(d$rank, "integer")
+  num_rows <- nrow(d)
+  expect_equal(d$rank, rep(992, num_rows))
+})

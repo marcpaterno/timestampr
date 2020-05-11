@@ -1,0 +1,25 @@
+Package: timestampr
+Type: Package
+Title: Analysis of MPI timestamp logs
+Version: 0.0.0.9000
+Authors@R: "Marc Paterno <paterno@fnal.gov> [aut, cre]"
+Description: Reading and analysis of MPI timestamp logs.
+    Fairly detailed timing of MPI programs can be obtained by recording
+    timestamps for various categories of events. The pattern of recording
+    a timestamp value, a name for the event type, and an arbitrary integer
+    datum for the event has been found useful for several analysis.
+    This package provides facilities for reading the raw data written
+    by such timing, and for organizing the data into other useful formats.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: checkmate(>= 2.0.0),
+         dplyr(>= 0.8.5),
+         magrittr(>= 1.5),
+         rlang(>= 0.4.6),
+         stringr(>= 1.4.0),
+         tibble(>= 3.0.1),
+         tidyr(>= 1.0.3)
+Suggests: 
+    testthat
+RoxygenNote: 7.1.0
