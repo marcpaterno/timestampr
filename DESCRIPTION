@@ -1,7 +1,7 @@
 Package: timestampr
 Type: Package
 Title: Analysis of MPI timestamp logs
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: "Marc Paterno <paterno@fnal.gov> [aut, cre]"
 Description: Reading and analysis of MPI timestamp logs.
     Fairly detailed timing of MPI programs can be obtained by recording
@@ -14,12 +14,12 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: checkmate(>= 2.0.0),
-         dplyr(>= 0.8.5),
+         dplyr(>= 1.0.0),
          magrittr(>= 1.5),
          rlang(>= 0.4.6),
          stringr(>= 1.4.0),
          tibble(>= 3.0.1),
-         tidyr(>= 1.0.3)
+         tidyr(>= 1.1.0)
 Suggests: 
     testthat
 RoxygenNote: 7.1.0
