@@ -95,4 +95,120 @@ make_global_df <- function(dx)
   globals
 }
 
+#' Extract reduction phases information from an eventselection dataframe
+#'
+#' @param dx an eventselection raw dataframe
+#'
+#' @return a tibble containing reduction phases information
+#' @export
+#' @importFrom rlang .data
+#' @importFrom magrittr %>%
+#'
+make_reduction_phase_df <- function(dx)
+{
+  reduction_steps <- c("start_reduce_data", "mid_reduce_data", "end_reduce_data")
+  nsteps <- length(reduction_steps)
+  checkmate::assert_count(nsteps)
+  x <- dplyr::select(dx, .data$ts, .data$step, .data$rank) %>% dplyr::filter(.data$step %in% reduction_steps)
+  add_pass <- function(d, key) { nr <- nrow(d)/nsteps ; dplyr::mutate(d, pass = rep(1:nr, each = nsteps)) }
+  dplyr::group_by(x, .data$rank) %>%
+    dplyr::group_modify(add_pass) %>%
+    dplyr::ungroup() %>%
+    tidyr::pivot_wider(names_from = .data$step, values_from = .data$ts) %>%
+    dplyr::rename(start = .data$start_reduce_data, mid = .data$mid_reduce_data, end = .data$end_reduce_data) %>%
+    dplyr::mutate(duration = .data$end - .data$start,
+                  deq = .data$mid - .data$start,
+                  enq = .data$end - .data$mid)
+}
+
+#' Extract reduction loop 1 (dequeue and merge) information from an eventselection dataframe
+#'
+#' @param dx an eventselection raw dataframe
+#'
+#' @return a tibble containing reduction loop 1 information
+#' @export
+#' @importFrom rlang .data
+#' @importFrom magrittr %>%
+#'
+make_reduction_loop1_df <- function(dx)
+{
+  reduction_steps <- c("pre_dequeue", "pre_block_reduce", "post_block_reduce")
+  # step                 meaning of 'data'
+  # ---------------------------------------
+  # pre_dequeue          loop index
+  # pre_block_reduce     number of IDs dequeued this loop
+  # post_block_reduce    id of ReduceProxy for this pass (not loop)
+
+  nsteps <- length(reduction_steps)
+  dx <- dplyr::filter(dx, .data$step %in% reduction_steps)
+  add_pass <- function(d, key) { nr <- nrow(d)/nsteps ; dplyr::mutate(d, pass = rep(1:nr, each = nsteps)) }
+  res <-
+    dplyr::group_by(dx, .data$rank) %>%
+    dplyr::group_modify(add_pass) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(.data$rank, .data$pass, .data$step, .data$ts) %>% # we do not keep data here
+    # each pair of (rank, pass) defines a distinct record
+    tidyr::pivot_wider(names_from = .data$step, values_from = .data$ts)
+  idx <-
+    dx %>%
+    dplyr::filter(.data$step == "pre_dequeue") %>%
+    dplyr::pull(.data$data)
+  ndq <-
+    dx %>%
+    dplyr::filter(.data$step == "pre_block_reduce") %>%
+    dplyr::pull(.data$data)
+  rpid <-
+    dx %>%
+    dplyr::filter(.data$step == "post_block_reduce") %>%
+    dplyr::pull(.data$data)
+  dplyr::mutate(res, idx = idx, ndq = ndq, rpid = rpid,
+                start = .data$pre_dequeue,
+                med = .data$pre_block_reduce,
+                end = .data$post_block_reduce,
+                t_dq  = .data$med - .data$start,
+                t_red = .data$end - .data$med,
+                t_tot = .data$end - .data$start)
+}
+
+#' Extract reduction loop 2 (enqueue) information from an eventselection dataframe
+#'
+#' @param dx an eventselection raw dataframe
+#'
+#' @return a tibble containing reduction loop 2 information
+#' @export
+#' @importFrom rlang .data
+#' @importFrom magrittr %>%
+#'
+make_reduction_loop2_df <- function(dx)
+{
+  reduction_steps <- c("pre_enqueue", "post_enqueue")
+# step                 meaning of 'data'
+# ---------------------------------------
+# pre_enqueue          loop index
+# post_enqueue         loop index
+
+nsteps <- length(reduction_steps)
+dx <- dplyr::filter(dx, .data$step %in% reduction_steps)
+add_pass <- function(d, key) { nr <- nrow(d)/nsteps ; dplyr::mutate(d, pass = rep(1:nr, each = nsteps)) }
+res <-
+  dplyr::group_by(dx, .data$rank) %>%
+  dplyr::group_modify(add_pass) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(.data$rank, .data$pass, .data$step, .data$ts) %>% # we do not keep data here
+  # each pair of (rank, pass) defines a distinct record
+  tidyr::pivot_wider(names_from = .data$step, values_from = .data$ts)
+idxpre <-
+  dx %>%
+  dplyr::filter(.data$step == "pre_enqueue") %>%
+  dplyr::pull(.data$data)
+idxpost <-
+  dx %>%
+  dplyr::filter(.data$step == "post_enqueue") %>%
+  dplyr::pull(.data$data)
+dplyr::mutate(res, idxpre = idxpre, idxpost = idxpost,
+              start = .data$pre_enqueue,
+              end = .data$post_enqueue,
+              t_tot = .data$end - .data$start)
+}
+
 

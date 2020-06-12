@@ -12,6 +12,7 @@ read_raw_dataframes <- function(fileglob)
   checkmate::check_scalar(fileglob)
   checkmate::check_string(fileglob)
   fnames <- Sys.glob(fileglob)
+  checkmate::check_character(fnames, min.len = 1)
   num_real_cores <- parallel::detectCores(logical = FALSE)
   use_parallel <- isTRUE(length(fnames) > 3 * num_real_cores)
   if (use_parallel) {
