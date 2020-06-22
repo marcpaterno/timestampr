@@ -2,7 +2,7 @@
 % Please edit documentation in R/eventselection.R
 \name{make_events_df}
 \alias{make_events_df}
-\title{Extract event-level data from an evenselection dataframe}
+\title{Extract event-level data from an evenselection dataframe.}
 \usage{
 make_events_df(dx)
 }
@@ -13,5 +13,6 @@ make_events_df(dx)
 a tibble containing event-level data
 }
 \description{
-Extract event-level data from an evenselection dataframe
+Each row in the returned dataframe corresponds to a single event
+processed.
 }

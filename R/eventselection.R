@@ -1,5 +1,8 @@
 
-#' Extract event-level data from an evenselection dataframe
+#' Extract event-level data from an evenselection dataframe.
+#'
+#' Each row in the returned dataframe corresponds to a single event
+#' processed.
 #'
 #' @param dx  an eventselection raw dataframe
 #'
@@ -66,7 +69,9 @@ make_events_df <- function(dx)
   evts
 }
 
-#' Extract global (once per rank) data from an eventselection dataframe
+#' Extract global data from an eventselection dataframe.
+#'
+#' Each row in the returned dataframe corresponds to one rank in the program.
 #'
 #' @param dx an eventselection raw dataframe
 #'
@@ -95,7 +100,10 @@ make_global_df <- function(dx)
   globals
 }
 
-#' Extract reduction phases information from an eventselection dataframe
+#' Extract reduction round information from an eventselection dataframe.
+#'
+#' Each row in the returned dataframe corresponds to one call to the reduceData.
+#' function, for a given block in a rank.
 #'
 #' @param dx an eventselection raw dataframe
 #'
@@ -107,11 +115,16 @@ make_global_df <- function(dx)
 make_reduction_phase_df <- function(dx)
 {
   reduction_steps <- c("start_reduce_data", "mid_reduce_data", "end_reduce_data")
+  # step                 meaning of 'data'
+  # ---------------------------------------
+  # start_reduce_data    current block id
+  # mid_reduce_data      number of slices held by current block after dequeuing
+  # end_reduce_data      round number
   nsteps <- length(reduction_steps)
   checkmate::assert_count(nsteps)
   x <- dplyr::select(dx, .data$ts, .data$step, .data$rank) %>% dplyr::filter(.data$step %in% reduction_steps)
   add_pass <- function(d, key) { nr <- nrow(d)/nsteps ; dplyr::mutate(d, pass = rep(1:nr, each = nsteps)) }
-  dplyr::group_by(x, .data$rank) %>%
+  res <- dplyr::group_by(x, .data$rank) %>%
     dplyr::group_modify(add_pass) %>%
     dplyr::ungroup() %>%
     tidyr::pivot_wider(names_from = .data$step, values_from = .data$ts) %>%
@@ -119,9 +132,18 @@ make_reduction_phase_df <- function(dx)
     dplyr::mutate(duration = .data$end - .data$start,
                   deq = .data$mid - .data$start,
                   enq = .data$end - .data$mid)
+  nslices <-
+    dplyr::filter(dx, .data$step == "mid_reduce_data") %>%
+    dplyr::pull(.data$data)
+  res %>%
+    dplyr::mutate(nslices = nslices)
 }
 
-#' Extract reduction loop 1 (dequeue and merge) information from an eventselection dataframe
+#' Extract reduction loop 1 information from an eventselection dataframe.
+#'
+#' Each row in the dataframe corresponds to an iteration in the
+#' dequeue-and-merge loop. Note that some iterations may produce only a 'start_dequeue_loop'
+#' record.
 #'
 #' @param dx an eventselection raw dataframe
 #'
@@ -132,12 +154,14 @@ make_reduction_phase_df <- function(dx)
 #'
 make_reduction_loop1_df <- function(dx)
 {
-  reduction_steps <- c("pre_dequeue", "pre_block_reduce", "post_block_reduce")
+  reduction_steps <- c("start_dequeue_loop", "pre_dequeue", "pre_block_reduce", "post_block_reduce", "end_dequeue_loop")
   # step                 meaning of 'data'
   # ---------------------------------------
+  # start_dequeue_loop   incoming block id
   # pre_dequeue          loop index
-  # pre_block_reduce     number of IDs dequeued this loop
-  # post_block_reduce    id of ReduceProxy for this pass (not loop)
+  # pre_block_reduce     number of SliceIDs dequeued this loop
+  # post_block_reduce    our block id
+  # end_dequeue_loop     round
 
   nsteps <- length(reduction_steps)
   dx <- dplyr::filter(dx, .data$step %in% reduction_steps)
@@ -149,6 +173,11 @@ make_reduction_loop1_df <- function(dx)
     dplyr::select(.data$rank, .data$pass, .data$step, .data$ts) %>% # we do not keep data here
     # each pair of (rank, pass) defines a distinct record
     tidyr::pivot_wider(names_from = .data$step, values_from = .data$ts)
+
+  incoming_bid <-
+    dx %>%
+    dplyr::filter(.data$step == "start_dequeue_loop") %>%
+    dplyr::pull(.data$data)
   idx <-
     dx %>%
     dplyr::filter(.data$step == "pre_dequeue") %>%
@@ -157,11 +186,21 @@ make_reduction_loop1_df <- function(dx)
     dx %>%
     dplyr::filter(.data$step == "pre_block_reduce") %>%
     dplyr::pull(.data$data)
-  rpid <-
+  bid <-
     dx %>%
     dplyr::filter(.data$step == "post_block_reduce") %>%
     dplyr::pull(.data$data)
-  dplyr::mutate(res, idx = idx, ndq = ndq, rpid = rpid,
+  round <-
+    dx %>%
+    dplyr::filter(.data$step == "end_dequeue_loop") %>%
+    dplyr::pull(.data$data)
+
+  dplyr::mutate(res,
+                bid = bid,
+                round = round,
+                idx = idx,
+                incoming_bid = incoming_bid,
+                ndq = ndq,
                 start = .data$pre_dequeue,
                 med = .data$pre_block_reduce,
                 end = .data$post_block_reduce,
@@ -184,8 +223,11 @@ make_reduction_loop2_df <- function(dx)
   reduction_steps <- c("pre_enqueue", "post_enqueue")
 # step                 meaning of 'data'
 # ---------------------------------------
-# pre_enqueue          loop index
-# post_enqueue         loop index
+# start_enqueue_loop   loop index
+# pre_enqueue          target block id
+# post_enqueue         number of slices enqueued
+# pre_end_enqueue_loop our block id
+# end_enqueue_loop     round
 
 nsteps <- length(reduction_steps)
 dx <- dplyr::filter(dx, .data$step %in% reduction_steps)

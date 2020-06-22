@@ -24,5 +24,9 @@ read_raw <- function(fname)
   result$rank <- rank
   # Note: we do not turn the data.frame into a tibble here, because a bug in bind_rows
   # creates a later failure if we're trying to bind tibbles.
-  result
+  #
+  # Because of a problem in some versions of the record printing, strip leading and trailing spaces
+  # from step names.
+  result %>%
+    mutate(step = stringr::str_trim(step))
 }

@@ -4,10 +4,12 @@
 \alias{read_raw_dataframes}
 \title{Read several raw dataframes}
 \usage{
-read_raw_dataframes(fileglob)
+read_raw_dataframes(fileglob, use_parallel = NULL)
 }
 \arguments{
 \item{fileglob}{a glob pattern identifying all the files to read}
+
+\item{use_parallel}{force use of parallel reading}
 }
 \value{
 a tibble combining all the dataframes read from the files

@@ -2,7 +2,7 @@
 % Please edit documentation in R/eventselection.R
 \name{make_reduction_loop1_df}
 \alias{make_reduction_loop1_df}
-\title{Extract reduction loop 1 (dequeue and merge) information from an eventselection dataframe}
+\title{Extract reduction loop 1 information from an eventselection dataframe.}
 \usage{
 make_reduction_loop1_df(dx)
 }
@@ -13,5 +13,7 @@ make_reduction_loop1_df(dx)
 a tibble containing reduction loop 1 information
 }
 \description{
-Extract reduction loop 1 (dequeue and merge) information from an eventselection dataframe
+Each row in the dataframe corresponds to an iteration in the
+dequeue-and-merge loop. Note that some iterations may produce only a 'start_dequeue_loop'
+record.
 }

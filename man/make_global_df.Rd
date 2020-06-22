@@ -2,7 +2,7 @@
 % Please edit documentation in R/eventselection.R
 \name{make_global_df}
 \alias{make_global_df}
-\title{Extract global (once per rank) data from an eventselection dataframe}
+\title{Extract global data from an eventselection dataframe.}
 \usage{
 make_global_df(dx)
 }
@@ -13,5 +13,5 @@ make_global_df(dx)
 a tibble containing global data
 }
 \description{
-Extract global (once per rank) data from an eventselection dataframe
+Each row in the returned dataframe corresponds to one rank in the program.
 }

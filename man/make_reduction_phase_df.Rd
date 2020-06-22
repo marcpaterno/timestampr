@@ -2,7 +2,7 @@
 % Please edit documentation in R/eventselection.R
 \name{make_reduction_phase_df}
 \alias{make_reduction_phase_df}
-\title{Extract reduction phases information from an eventselection dataframe}
+\title{Extract reduction round information from an eventselection dataframe.}
 \usage{
 make_reduction_phase_df(dx)
 }
@@ -13,5 +13,6 @@ make_reduction_phase_df(dx)
 a tibble containing reduction phases information
 }
 \description{
-Extract reduction phases information from an eventselection dataframe
+Each row in the returned dataframe corresponds to one call to the reduceData.
+function, for a given block in a rank.
 }
