@@ -2,7 +2,8 @@
 % Please edit documentation in R/eventselection.R
 \name{make_reduction_loop2_df}
 \alias{make_reduction_loop2_df}
-\title{Extract reduction loop 2 (enqueue) information from an eventselection dataframe}
+\title{Extract reduction loop 2 (enqueue) information from an eventselection
+dataframe}
 \usage{
 make_reduction_loop2_df(dx)
 }
@@ -13,5 +14,17 @@ make_reduction_loop2_df(dx)
 a tibble containing reduction loop 2 information
 }
 \description{
-Extract reduction loop 2 (enqueue) information from an eventselection dataframe
+Each row in the dataframe corresponds to an iteration in the enqueue loop.
+}
+\details{
+The dataframe columns are:
+  rank: the MPI rank on which the loop was executed
+  start: the time at the start of the loop
+  end: the time after the enqueuing
+  idx: the loop index for this iteration
+  target_bid: the id of the block to which the enqueued data are sent
+  nenq: number of slices enqueued this iteration
+  bid: the id of the block on which reduceData was called
+  round: the reduction round
+  t_tot: total duration of the loop
 }

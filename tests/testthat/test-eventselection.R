@@ -19,9 +19,14 @@ test_that("creating global dataframe works", {
 test_that("creating reduction pass dataframe works", {
   raw <- read_raw_dataframes("timing_?_4_500.dat")
   expect_s3_class(raw, "tbl_df")
-  pass <- make_reduction_phase_df(raw)
-  expect_s3_class(pass, "tbl_df")
-  expect_equal(nrow(pass), 16L)
+  rounds <- make_reduction_phase_df(raw)
+  expect_s3_class(rounds, "tbl_df")
+  expect_named(rounds, expected=c("rank", "start", "mid", "end",
+                                  "duration", "deq", "enq",
+                                  "bid","nslices","round"),
+               ignore.order = TRUE)
+  expect_equal(nrow(rounds), 16L)
+
 })
 
 test_that("creating reduction loop1 dataframe works", {
@@ -29,6 +34,11 @@ test_that("creating reduction loop1 dataframe works", {
   expect_s3_class(raw, "tbl_df")
   loop1 <- make_reduction_loop1_df(raw)
   expect_s3_class(loop1, "tbl_df")
+  expect_named(loop1,
+               expected = c("rank", "start", "med", "end",
+                            "idx", "incoming_bid", "ndq", "bid", "round",
+                            "t_dq", "t_red", "t_tot"),
+               ignore.order = TRUE)
   expect_equal(nrow(loop1), 2L)
   expect_equal(loop1$incoming_bid, c(8, 9))
   expect_equal(loop1$idx, c(0, 1))
@@ -42,6 +52,10 @@ test_that("creating reduction loop2 dataframe works", {
   expect_s3_class(raw, "tbl_df")
   loop2 <- make_reduction_loop2_df(raw)
   expect_s3_class(loop2, "tbl_df")
+  expect_named(loop2,
+               expected = c("rank", "start","end", "idx", "target_bid",
+                            "nenq", "bid", "round", "t_tot"),
+               ignore.order = TRUE)
   expect_equal(nrow(loop2),3L)
   expect_equal(loop2$bid, c(9, 8, 8))
   expect_equal(loop2$round, c(0, 0, 1))
@@ -51,9 +65,10 @@ test_that("creating reduction loop2 dataframe works", {
 
 test_that("reduction pass dataframe is correct", {
   raw <- read_raw_dataframes("timing_3_4_500.dat")
-  pass <- make_reduction_phase_df(raw)
-  expect_equal(nrow(pass), 3L)
-  expect_equal(pass$rank, c(3,3,3))
-  expect_equal(pass$pass, 1:3)
-  expect_equal(pass$nslices, c(9, 6, 15))
+  rounds <- make_reduction_phase_df(raw)
+  expect_equal(nrow(rounds), 3L)
+  expect_equal(rounds$rank, c(3,3,3))
+  expect_equal(rounds$bid, c(9, 8, 8))
+  expect_equal(rounds$nslices, c(9, 6, 15))
+  expect_equal(rounds$round, c(0, 0, 1))
 })

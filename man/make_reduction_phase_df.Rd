@@ -13,6 +13,19 @@ make_reduction_phase_df(dx)
 a tibble containing reduction phases information
 }
 \description{
-Each row in the returned dataframe corresponds to one call to the reduceData.
-function, for a given block in a rank.
+Each row in the returned dataframe corresponds to one call to the reduceData
+function, for a given block.
+}
+\details{
+The dataframe columns are:
+  rank: the MPI rank on which the call was made
+  start: time at start of function
+  mid: time after end of first loop
+  end: time at end of the function
+  duration: total function duration
+  deq: duration of first loop (dequeue and merge)
+  enq: duration of second loop (enqueue)
+  bid: id of block on which reduceData was called
+  nslices: number of SliceIDs carrired by this block after the merge
+  round: the reduction round
 }

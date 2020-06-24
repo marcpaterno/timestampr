@@ -14,6 +14,20 @@ a tibble containing reduction loop 1 information
 }
 \description{
 Each row in the dataframe corresponds to an iteration in the
-dequeue-and-merge loop. Note that some iterations may produce only a 'start_dequeue_loop'
-record.
+dequeue-and-merge loop.
+}
+\details{
+The dataframe columns are:
+  rank: the MPI rank on which the loop was executed
+  start: the time at the start of the loop
+  med: the time after dequeuing slices but before reduction
+  end: the time after the reduction
+  idx: the loop index for this iteration
+  incoming_bid: the id of the incoming block on this iteration
+  ndq: number of slices dequeued this iteration
+  bid: the id of the block on which reduceData was called
+  round: the reduction round
+  t_dq: duration of dequeue call
+  t_red: duration of the reduce call
+  t_tot: total duration of the loop
 }
