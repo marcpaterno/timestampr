@@ -43,6 +43,10 @@ test_that("creating reduction loop2 dataframe works", {
   loop2 <- make_reduction_loop2_df(raw)
   expect_s3_class(loop2, "tbl_df")
   expect_equal(nrow(loop2),3L)
+  expect_equal(loop2$bid, c(9, 8, 8))
+  expect_equal(loop2$round, c(0, 0, 1))
+  expect_equal(loop2$idx, c(0, 0, 0))
+  expect_equal(loop2$target_bid, c(8, 8, 0))
 })
 
 test_that("reduction pass dataframe is correct", {

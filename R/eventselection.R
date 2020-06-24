@@ -220,7 +220,7 @@ make_reduction_loop1_df <- function(dx)
 #'
 make_reduction_loop2_df <- function(dx)
 {
-  reduction_steps <- c("pre_enqueue", "post_enqueue")
+  reduction_steps <- c("start_enqueue_loop", "pre_enqueue", "post_enqueue", "pre_end_enqueue_loop", "end_enqueue_loop")
 # step                 meaning of 'data'
 # ---------------------------------------
 # start_enqueue_loop   loop index
@@ -239,15 +239,33 @@ res <-
   dplyr::select(.data$rank, .data$pass, .data$step, .data$ts) %>% # we do not keep data here
   # each pair of (rank, pass) defines a distinct record
   tidyr::pivot_wider(names_from = .data$step, values_from = .data$ts)
-idxpre <-
+
+idx <-
+  dx %>%
+  dplyr::filter(.data$step == "start_enqueue_loop") %>%
+  dplyr::pull(.data$data)
+target_bid <-
   dx %>%
   dplyr::filter(.data$step == "pre_enqueue") %>%
   dplyr::pull(.data$data)
-idxpost <-
+nenq <-
   dx %>%
   dplyr::filter(.data$step == "post_enqueue") %>%
   dplyr::pull(.data$data)
-dplyr::mutate(res, idxpre = idxpre, idxpost = idxpost,
+bid <-
+  dx %>%
+  dplyr::filter(.data$step == "pre_end_enqueue_loop") %>%
+  dplyr::pull(.data$data)
+round <-
+  dx %>%
+  dplyr::filter(.data$step == "end_enqueue_loop") %>%
+  dplyr::pull(.data$data)
+dplyr::mutate(res,
+              bid = bid,
+              round = round,
+              idx = idx,
+              target_bid = target_bid,
+              nenq = nenq,
               start = .data$pre_enqueue,
               end = .data$post_enqueue,
               t_tot = .data$end - .data$start)

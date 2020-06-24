@@ -18,8 +18,9 @@ read_raw_dataframes <- function(fileglob, use_parallel = NULL)
   if (rlang::is_null(use_parallel))  use_parallel <- isTRUE(length(fnames) > 3 * num_real_cores)
   if (use_parallel) {
     cl <- parallel::makeForkCluster(num_real_cores)
+    on.exit(parallel::stopCluster(cl))
     dfs <- parallel::parLapply(cl, fnames, read_raw)
-    parallel::stopCluster(cl)
+    #parallel::stopCluster(cl)
   } else {
      dfs <- lapply(fnames, read_raw)
   }

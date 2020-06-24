@@ -28,5 +28,5 @@ read_raw <- function(fname)
   # Because of a problem in some versions of the record printing, strip leading and trailing spaces
   # from step names.
   result %>%
-    mutate(step = stringr::str_trim(step))
+    dplyr::mutate(step = stringr::str_trim(.data$step))
 }
