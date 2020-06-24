@@ -1,7 +1,7 @@
 Package: timestampr
 Type: Package
 Title: Analysis of MPI timestamp logs
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: "Marc Paterno <paterno@fnal.gov> [aut, cre]"
 Description: Reading and analysis of MPI timestamp logs.
     Fairly detailed timing of MPI programs can be obtained by recording
