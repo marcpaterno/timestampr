@@ -8,8 +8,8 @@
 #'
 read_raw <- function(fname)
 {
-  checkmate::check_scalar(fname)
-  checkmate::check_file_exists(fname)
+  checkmate::assert_scalar(fname)
+  checkmate::assert_file_exists(fname)
   filename <- basename(fname)
   parts <- stringr::str_split(filename, "[\\._]")[[1]]
   rank <- as.integer(parts[2])

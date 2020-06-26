@@ -1,5 +1,5 @@
 test_that("reading empty file works", {
-  d <- read_raw("empty_001.dat")
+  d <- read_raw("test_data/empty_001.dat")
   expect_s3_class(d, "data.frame")
   expect_length(d, 4L)
   expect_named(d, c("ts", "data", "step", "rank"))
@@ -10,7 +10,7 @@ test_that("reading empty file works", {
 })
 
 test_that("reading normal files works", {
-  d <- read_raw("timing_992_7056_100.dat.xz")
+  d <- read_raw("test_data/timing_992_7056_100.dat.xz")
   expect_s3_class(d, "data.frame")
   expect_length(d, 4)
   expect_named(d, c("ts", "data", "step", "rank"))

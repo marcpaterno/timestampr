@@ -1,5 +1,5 @@
 test_that("creating events dataframe works", {
-  raw <- read_raw_dataframes("timing_?_4_500.dat")
+  raw <- read_raw_dataframes("test_data/timing_?_4_500.dat")
   expect_s3_class(raw, "tbl_df")
   events <- make_events_df(raw)
   expect_s3_class(events, "tbl_df")
@@ -9,7 +9,7 @@ test_that("creating events dataframe works", {
 })
 
 test_that("creating global dataframe works", {
-  raw <- read_raw_dataframes("timing_?_4_500.dat")
+  raw <- read_raw_dataframes("test_data/timing_?_4_500.dat")
   expect_s3_class(raw, "tbl_df")
   ranks <- make_global_df(raw)
   expect_s3_class(ranks, "tbl_df")
@@ -17,7 +17,7 @@ test_that("creating global dataframe works", {
 })
 
 test_that("creating reduction pass dataframe works", {
-  raw <- read_raw_dataframes("timing_?_4_500.dat")
+  raw <- read_raw_dataframes("test_data/timing_?_4_500.dat")
   expect_s3_class(raw, "tbl_df")
   rounds <- make_reduction_phase_df(raw)
   expect_s3_class(rounds, "tbl_df")
@@ -30,7 +30,7 @@ test_that("creating reduction pass dataframe works", {
 })
 
 test_that("creating reduction loop1 dataframe works", {
-  raw <- read_raw_dataframes("timing_3_4_500.dat")
+  raw <- read_raw_dataframes("test_data/timing_3_4_500.dat")
   expect_s3_class(raw, "tbl_df")
   loop1 <- make_reduction_loop1_df(raw)
   expect_s3_class(loop1, "tbl_df")
@@ -48,7 +48,7 @@ test_that("creating reduction loop1 dataframe works", {
 })
 
 test_that("creating reduction loop2 dataframe works", {
-  raw <- read_raw_dataframes("timing_3_4_500.dat")
+  raw <- read_raw_dataframes("test_data/timing_3_4_500.dat")
   expect_s3_class(raw, "tbl_df")
   loop2 <- make_reduction_loop2_df(raw)
   expect_s3_class(loop2, "tbl_df")
@@ -64,7 +64,7 @@ test_that("creating reduction loop2 dataframe works", {
 })
 
 test_that("reduction pass dataframe is correct", {
-  raw <- read_raw_dataframes("timing_3_4_500.dat")
+  raw <- read_raw_dataframes("test_data/timing_3_4_500.dat")
   rounds <- make_reduction_phase_df(raw)
   expect_equal(nrow(rounds), 3L)
   expect_equal(rounds$rank, c(3,3,3))

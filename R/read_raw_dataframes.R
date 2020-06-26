@@ -10,10 +10,10 @@
 #'
 read_raw_dataframes <- function(fileglob, use_parallel = NULL)
 {
-  checkmate::check_scalar(fileglob)
-  checkmate::check_string(fileglob)
+  checkmate::assert_scalar(fileglob)
+  checkmate::assert_string(fileglob)
   fnames <- Sys.glob(fileglob)
-  checkmate::check_character(fnames, min.len = 1)
+  checkmate::assert_character(fnames, min.len = 1)
   num_real_cores <- parallel::detectCores(logical = FALSE)
   if (rlang::is_null(use_parallel))  use_parallel <- isTRUE(length(fnames) > 3 * num_real_cores)
   if (use_parallel) {
