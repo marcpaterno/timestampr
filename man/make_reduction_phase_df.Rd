@@ -18,14 +18,16 @@ function, for a given block.
 }
 \details{
 The dataframe columns are:
-  rank: the MPI rank on which the call was made
-  start: time at start of function
-  mid: time after end of first loop
-  end: time at end of the function
-  duration: total function duration
-  deq: duration of first loop (dequeue and merge)
-  enq: duration of second loop (enqueue)
-  bid: id of block on which reduceData was called
-  nslices: number of SliceIDs carrired by this block after the merge
-  round: the reduction round
+\describe{
+    \item{rank}{the MPI rank on which the call was made}
+    \item{start}{time at start of function}
+    \item{mid}{time after end of first loop}
+    \item{end}{time at end of the function}
+    \item{duration}{total function duration}
+    \item{deq}{duration of first loop (dequeue and merge)}
+    \item{enq}{duration of second loop (enqueue)}
+    \item{bid}{id of block on which reduceData was called}
+    \item{nslices}{number of SliceIDs carrired by this block after the merge}
+    \item{round}{the reduction round}
+}
 }

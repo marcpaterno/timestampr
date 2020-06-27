@@ -4,8 +4,24 @@
 #' Each row in the returned dataframe corresponds to a single event
 #' processed.
 #'
-#' @param dx  an eventselection raw dataframe
+#' The dataframe columns are:
+#' \describe{
+#'    \item{rank}{the MPI rank on which the call was made}
+#'    \item{start}{time at start of the rank}
+#'    \item{precr}{timestamp before create_records call}
+#'    \item{postcr}{timestampe after create_records call}
+#'    \item{postfr}{timestamp after records have been filled}
+#'    \item{postps}{timestamp after slices have been filter for selection}
+#'    \item{load}{duration of loading data from HEPnOS (ms)}
+#'    \item{rec}{duration of record creation (ms)}
+#'    \item{filt}{duration of filter criterion application (ms)}
+#'    \item{evt}{id of this event}
+#'    \item{bid}{id of block which arried this event}
+#'    \item{nbytes}{sum of the size of records (in bytes) of this event}
+#'    \item{nslices}{number of slices in this event}
+#' }
 #'
+#' @param dx  an eventselection raw dataframe
 #' @return a tibble containing event-level data
 #' @export
 #' @importFrom rlang .data
@@ -52,8 +68,21 @@ make_events_df <- function(dx)
 #'
 #' Each row in the returned dataframe corresponds to one rank in the program.
 #'
-#' @param dx an eventselection raw dataframe
+#' The dataframe columns are:
+#' \describe{
+#'     \item{rank}{the MPI rank on which the call was made}
+#'     \item{start}{time at start of the rank}
+#'     \item{mid}{time after end of first loop}
+#'     \item{end}{time at end of the function}
+#'     \item{duration}{total function duration}
+#'     \item{deq}{duration of first loop (dequeue and merge)}
+#'     \item{enq}{duration of second loop (enqueue)}
+#'     \item{bid}{id of block on which reduceData was called}
+#'     \item{nslices}{number of SliceIDs carrired by this block after the merge}
+#'     \item{round}{the reduction round}
+#' }
 #'
+#' @param dx an eventselection raw dataframe
 #' @return a tibble containing global data
 #' @export
 #' @importFrom rlang .data
@@ -85,19 +114,20 @@ make_global_df <- function(dx)
 #' function, for a given block.
 #'
 #' The dataframe columns are:
-#'   rank: the MPI rank on which the call was made
-#'   start: time at start of function
-#'   mid: time after end of first loop
-#'   end: time at end of the function
-#'   duration: total function duration
-#'   deq: duration of first loop (dequeue and merge)
-#'   enq: duration of second loop (enqueue)
-#'   bid: id of block on which reduceData was called
-#'   nslices: number of SliceIDs carrired by this block after the merge
-#'   round: the reduction round
+#' \describe{
+#'     \item{rank}{the MPI rank on which the call was made}
+#'     \item{start}{time at start of function}
+#'     \item{mid}{time after end of first loop}
+#'     \item{end}{time at end of the function}
+#'     \item{duration}{total function duration}
+#'     \item{deq}{duration of first loop (dequeue and merge)}
+#'     \item{enq}{duration of second loop (enqueue)}
+#'     \item{bid}{id of block on which reduceData was called}
+#'     \item{nslices}{number of SliceIDs carrired by this block after the merge}
+#'     \item{round}{the reduction round}
+#' }
 #'
 #' @param dx an eventselection raw dataframe
-#'
 #' @return a tibble containing reduction phases information
 #' @export
 #' @importFrom rlang .data
@@ -145,21 +175,22 @@ make_reduction_phase_df <- function(dx)
 #' dequeue-and-merge loop.
 #'
 #' The dataframe columns are:
-#'   rank: the MPI rank on which the loop was executed
-#'   start: the time at the start of the loop
-#'   med: the time after dequeuing slices but before reduction
-#'   end: the time after the reduction
-#'   idx: the loop index for this iteration
-#'   incoming_bid: the id of the incoming block on this iteration
-#'   ndq: number of slices dequeued this iteration
-#'   bid: the id of the block on which reduceData was called
-#'   round: the reduction round
-#'   t_dq: duration of dequeue call
-#'   t_red: duration of the reduce call
-#'   t_tot: total duration of the loop
+#' \describe{
+#'     \item{rank}{the MPI rank on which the loop was executed}
+#'     \item{start}{the time at the start of the loop}
+#'     \item{med}{the time after dequeuing slices but before reduction}
+#'     \item{end}{the time after the reduction}
+#'     \item{idx}{the loop index for this iteration}
+#'     \item{incoming_bid}{the id of the incoming block on this iteration}
+#'     \item{ndq}{number of slices dequeued this iteration}
+#'     \item{bid}{the id of the block on which reduceData was called}
+#'     \item{round}{the reduction round}
+#'     \item{t_dq}{duration of dequeue call}
+#'     \item{t_red}{duration of the reduce call}
+#'     \item{t_tot}{total duration of the loop}
+#' }
 #'
 #' @param dx an eventselection raw dataframe
-#'
 #' @return a tibble containing reduction loop 1 information
 #' @export
 #' @importFrom rlang .data
@@ -229,18 +260,19 @@ make_reduction_loop1_df <- function(dx)
 #' Each row in the dataframe corresponds to an iteration in the enqueue loop.
 #'
 #' The dataframe columns are:
-#'   rank: the MPI rank on which the loop was executed
-#'   start: the time at the start of the loop
-#'   end: the time after the enqueuing
-#'   idx: the loop index for this iteration
-#'   target_bid: the id of the block to which the enqueued data are sent
-#'   nenq: number of slices enqueued this iteration
-#'   bid: the id of the block on which reduceData was called
-#'   round: the reduction round
-#'   t_tot: total duration of the loop
+#' \describe{
+#'     \item{rank}{the MPI rank on which the loop was executed}
+#'     \item{start}{the time at the start of the loop}
+#'     \item{end}{the time after the enqueuing}
+#'     \item{idx}{the loop index for this iteration}
+#'     \item{target_bid}{the id of the block to which the enqueued data are sent}
+#'     \item{nenq}{number of slices enqueued this iteration}
+#'     \item{bid}{the id of the block on which reduceData was called}
+#'     \item{round}{the reduction round}
+#'     \item{t_tot}{total duration of the loop}
+#' }
 #'
 #' @param dx an eventselection raw dataframe
-#'
 #' @return a tibble containing reduction loop 2 information
 #' @export
 #' @importFrom rlang .data

@@ -18,16 +18,18 @@ dequeue-and-merge loop.
 }
 \details{
 The dataframe columns are:
-  rank: the MPI rank on which the loop was executed
-  start: the time at the start of the loop
-  med: the time after dequeuing slices but before reduction
-  end: the time after the reduction
-  idx: the loop index for this iteration
-  incoming_bid: the id of the incoming block on this iteration
-  ndq: number of slices dequeued this iteration
-  bid: the id of the block on which reduceData was called
-  round: the reduction round
-  t_dq: duration of dequeue call
-  t_red: duration of the reduce call
-  t_tot: total duration of the loop
+\describe{
+    \item{rank}{the MPI rank on which the loop was executed}
+    \item{start}{the time at the start of the loop}
+    \item{med}{the time after dequeuing slices but before reduction}
+    \item{end}{the time after the reduction}
+    \item{idx}{the loop index for this iteration}
+    \item{incoming_bid}{the id of the incoming block on this iteration}
+    \item{ndq}{number of slices dequeued this iteration}
+    \item{bid}{the id of the block on which reduceData was called}
+    \item{round}{the reduction round}
+    \item{t_dq}{duration of dequeue call}
+    \item{t_red}{duration of the reduce call}
+    \item{t_tot}{total duration of the loop}
+}
 }

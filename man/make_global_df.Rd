@@ -15,3 +15,18 @@ a tibble containing global data
 \description{
 Each row in the returned dataframe corresponds to one rank in the program.
 }
+\details{
+The dataframe columns are:
+\describe{
+    \item{rank}{the MPI rank on which the call was made}
+    \item{start}{time at start of the rank}
+    \item{mid}{time after end of first loop}
+    \item{end}{time at end of the function}
+    \item{duration}{total function duration}
+    \item{deq}{duration of first loop (dequeue and merge)}
+    \item{enq}{duration of second loop (enqueue)}
+    \item{bid}{id of block on which reduceData was called}
+    \item{nslices}{number of SliceIDs carrired by this block after the merge}
+    \item{round}{the reduction round}
+}
+}
