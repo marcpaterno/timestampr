@@ -13,60 +13,39 @@
 #'
 make_events_df <- function(dx)
 {
-  event_steps = c(
-    "pre_create_records",
-    "post_fill_records",
-    "post_create_records",
-    "post_process_slices"
-  )
-  x <- dx %>% dplyr::filter(.data$step %in% event_steps)
+  event_steps = c("pre_create_records", "post_fill_records", "post_create_records", "post_process_slices")
+  nsteps <- length(event_steps)
+  x <- dplyr::select(dx, .data$ts, .data$step, .data$rank) %>% dplyr::filter(.data$step %in% event_steps)
+  add_pass <- function(d, key) { nr <- nrow(d)/nsteps ; dplyr::mutate(d, pass = rep(1:nr, each = nsteps)) }
+  res <- dplyr::group_by(x, .data$rank) %>%
+    dplyr::group_modify(add_pass) %>%
+    dplyr::ungroup() %>%
+    tidyr::pivot_wider(names_from = .data$step, values_from = .data$ts) %>%
+    dplyr::rename(precr = .data$pre_create_records,
+                  postfr = .data$post_fill_records,
+                  postcr = .data$post_create_records,
+                  postps = .data$post_process_slices)
 
-  nevents <- nrow(x) / 4
-  x <- dplyr::mutate(x, evt = rep(1:nevents, each = 4))
+  evt <- dplyr::filter(dx, .data$step == "pre_create_records") %>%
+         dplyr::pull(.data$data)
 
-  evts <-
-    tidyr::pivot_wider(x,
-      id_cols = c(.data$rank, .data$evt),
-      names_from = .data$step,
-      values_from = .data$ts
-    ) %>%
-    dplyr::rename(
-      precr = .data$pre_create_records,
-      postfr = .data$post_fill_records,
-      postcr = .data$post_create_records,
-      postps = .data$post_process_slices
-    )
-  # Next, we collect the number of slices in each event.
+  nslices <- dplyr::filter(dx, .data$step == "post_create_records") %>%
+             dplyr::pull(.data$data)
 
-  slices_per_event <-
-    x %>%
-    dplyr::filter(.data$step == "post_create_records") %>%
-    dplyr::select(nslices = .data$data, .data$evt)
-  bytes_per_event <-
-    x %>%
-    dplyr::filter(.data$step == "post_fill_records") %>%
-    dplyr::select(nbytes = .data$data, .data$evt)
-  both_per_event <-
-    dplyr::left_join(slices_per_event, bytes_per_event, by = "evt")
+  nbytes <- dplyr::filter(dx, .data$step == "post_fill_records") %>%
+            dplyr::pull(.data$data)
+  bid <- dplyr::filter(dx, .data$step == "post_process_slices") %>%
+         dplyr::pull(.data$data)
 
-  # The final step of preparation is to put the number of slices per event
-  #into the `evts` dataframe.
-  #We calculate the time taken for three tasks:
-
-  # 1. `load`, the time taken to read the data from _HEPnOS_ into the program memory,
-  # 2. `rec`, the time taken to convert from the read structure to the _StandardRecord_ format, and
-  # 3. `filt`, the time taken to run the NOvA filtering code on the _StandardRecord_ data.
-
-  evts <-
-    dplyr::left_join(evts, both_per_event, by = "evt")
-
-  evts <-
-    evts %>%
-    dplyr::mutate(load = .data$postfr - .data$precr,
-           rec = .data$postcr - .data$postfr,
-           filt = .data$postps - .data$postcr)
-
-  evts
+  res %>%
+    dplyr::mutate(evt = evt,
+                  nslices = nslices,
+                  nbytes = nbytes,
+                  bid = bid,
+                  load = .data$postfr - .data$precr,
+                  rec = .data$postcr - .data$postfr,
+                  filt = .data$postps - .data$postcr) %>%
+    dplyr::select(-.data$pass)
 }
 
 #' Extract global data from an eventselection dataframe.

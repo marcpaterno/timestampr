@@ -26,7 +26,6 @@ test_that("creating reduction pass dataframe works", {
                                   "bid","nslices","round"),
                ignore.order = TRUE)
   expect_equal(nrow(rounds), 16L)
-
 })
 
 test_that("creating reduction loop1 dataframe works", {
@@ -71,4 +70,22 @@ test_that("reduction pass dataframe is correct", {
   expect_equal(rounds$bid, c(9, 8, 8))
   expect_equal(rounds$nslices, c(9, 6, 15))
   expect_equal(rounds$round, c(0, 0, 1))
+})
+
+test_that("events dataframe is correct", {
+  raw <- read_raw_dataframes("test_data/timing_3_4_500.dat")
+  events <- make_events_df(raw)
+  expect_named(events,
+               expected = c("rank", "bid", "evt",
+                            "precr", "postfr", "postcr", "postps",
+                            "nslices", "nbytes",
+                            "load", "rec","filt"),
+               ignore.order = TRUE)
+  expect_equal(nrow(events), 919L)
+  expect_equal(events$rank, rep(3L, 919L))
+  top3 <- head(events, 3L)
+  expect_equal(top3$evt, c(131865, 131918, 132002))
+  expect_equal(top3$nslices, c(2, 3, 6))
+  expect_equal(top3$nbytes, c(3312, 5916, 11280))
+  # expect_equal(top3$)
 })
