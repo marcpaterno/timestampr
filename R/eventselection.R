@@ -115,8 +115,11 @@ make_events_df <- function(dx)
 #'
 make_global_df <- function(dx)
 {
-  global_steps = c("finish", "post_block_configurations", "post_broadcast", "post_dataset", "post_decompose", "post_reduction",
-                   "pre_decompose", "pre_execute_block", "post_execute_block", "pre_reduction", "start")
+  global_steps = c("finish", "post_block_configurations", "post_broadcast",
+                   "post_dataset", "post_decompose", "post_reduction",
+                   "pre_create_partners",
+                   "pre_decompose", "pre_execute_block", "post_execute_block",
+                   "pre_reduction", "start")
   globals <- dplyr::filter(dx, .data$step %in% global_steps)
   globals <- tidyr::pivot_wider(globals, id_cols = .data$rank, names_from = .data$step, values_from = .data$ts)
   globals <- globals %>%
@@ -127,6 +130,7 @@ make_global_df <- function(dx)
            makeblocks = .data$post_decompose - .data$pre_decompose,
            makelambda = .data$pre_execute_block - .data$post_decompose,
            executeblock = .data$post_execute_block - .data$pre_execute_block,
+           makepartners = .data$pre_reduction - .data$pre_create_partners,
            reduction = .data$post_reduction - .data$pre_reduction,
            output = .data$finish - .data$post_reduction,
            total = .data$finish - .data$start)
