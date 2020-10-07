@@ -9,11 +9,22 @@ test_that("creating events dataframe works", {
 })
 
 test_that("creating global dataframe works", {
+  print("Starting test of global dataframe")
   raw <- read_raw_dataframes("test_data/timing_?_4_500.dat")
   expect_s3_class(raw, "tbl_df")
   ranks <- make_global_df(raw)
   expect_s3_class(ranks, "tbl_df")
   expect_equal(nrow(ranks), 4L)
+  expected_names = c("rank", "start", "post_dataset",
+                     "post_block_configurations", "post_broadcast",
+                     "pre_decompose", "post_decompose", "pre_execute_block",
+                     "post_execute_block", "pre_create_partners",
+                     "pre_reduction", "post_reduction",
+                     "finish", "makeds",
+                     "calcbc", "broadcast", "prep", "makeblocks",
+                     "makelambda", "executeblock", "makepartners",
+                     "reduction", "output", "total")
+  expect_named(ranks, expected=expected_names)
 })
 
 test_that("creating reduction pass dataframe works", {
