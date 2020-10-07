@@ -1,5 +1,7 @@
-
-#' Create a tibble from a single rank timing file
+#' Create a tibble from a single rank timing file.
+#'
+#' See the documentation for read_raw_dataframes for a description of the
+#' resulting dataframe.
 #'
 #' @param fname name of the file to read
 #'

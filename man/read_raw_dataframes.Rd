@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_raw_dataframes.R
 \name{read_raw_dataframes}
 \alias{read_raw_dataframes}
-\title{Read several raw dataframes}
+\title{Create a tibble from all the rank timing files for a program run.}
 \usage{
 read_raw_dataframes(fileglob, use_parallel = NULL)
 }
@@ -15,5 +15,20 @@ read_raw_dataframes(fileglob, use_parallel = NULL)
 a tibble combining all the dataframes read from the files
 }
 \description{
-Read several raw dataframes
+Each row of the returned dataframe corresponds to a single recorded
+timestamp.
+}
+\details{
+The dataframe columns are:
+\describe{
+    \item{ts}{the MPI timestamp recorded for this "event".}
+    \item{data}{a context-dependent (integer) data value. See notes below.}
+    \item{step}{the kind of "event" to which this record corresponds.}
+    \item{rank}{the MPI rank in which this "event" was recorded.}
+}
+
+The meaning of each "data" value depends on the "step" for which it is
+recorded. See the documentation for the functions make_events_df,
+make_global_df, make_reduction_phase_df, make_reduction_loop1_df, and
+make_reduction_loop2_df for the details.
 }

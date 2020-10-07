@@ -22,7 +22,7 @@ The dataframe columns are:
    \item{rank}{the MPI rank on which the call was made}
    \item{start}{time at start of the rank}
    \item{precr}{timestamp before create_records call}
-   \item{postcr}{timestampe after create_records call}
+   \item{postcr}{timestamp after create_records call}
    \item{postfr}{timestamp after records have been filled}
    \item{postps}{timestamp after slices have been filter for selection}
    \item{load}{duration of loading data from HEPnOS (ms)}

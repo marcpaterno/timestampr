@@ -2,7 +2,7 @@
 % Please edit documentation in R/eventselection.R
 \name{make_global_df}
 \alias{make_global_df}
-\title{Extract global data from an eventselection dataframe.}
+\title{Extract global data (once-per-rank data) from an eventselection dataframe.}
 \usage{
 make_global_df(dx)
 }
@@ -19,14 +19,39 @@ Each row in the returned dataframe corresponds to one rank in the program.
 The dataframe columns are:
 \describe{
     \item{rank}{the MPI rank on which the call was made}
-    \item{start}{time at start of the rank}
-    \item{mid}{time after end of first loop}
-    \item{end}{time at end of the function}
-    \item{duration}{total function duration}
-    \item{deq}{duration of first loop (dequeue and merge)}
-    \item{enq}{duration of second loop (enqueue)}
-    \item{bid}{id of block on which reduceData was called}
-    \item{nslices}{number of SliceIDs carrired by this block after the merge}
-    \item{round}{the reduction round}
+    \item{start}{time at which the rank started running}
+    \item{post_dataset}{time at which the HEPnOS dataset creation finished}
+    \item{post_block_configurations}{time at which creation of EventSelectionConfigs finished}
+    \item{post_broadcast}{time at which broadcast of EventSelectionConfigs is finished}
+    \item{pre_decompose}{time before making DIY blocks}
+    \item{post_decompose}{time after making DIY blocks}
+    \item{pre_execute_block}{time before execution of blocks}
+    \item{post_execute_block}{time after execution of blocks}
+    \item{pre_create_partners}{time before creation of DIY merge partners}
+    \item{pre_reduction}{time before DIY reduction starts }
+    \item{post_reduction}{time after DIY reduction finishes}
+    \item{finish}{time after output is written (see note 3 below)}
+    \item{makeds}{duration for creation of HEPnOS dataset}
+    \item{calcbc}{duration for making EventSelectionConfigs (see note 1 below)}
+    \item{broadcast}{duration of broadcast (see note 1 below)}
+    \item{prep}{duration of prep work before making blocks}
+    \item{makeblocks}{duration of block creation}
+    \item{makelambda}{duration creation of prefetcher and of the lambda that executes the blocks}
+    \item{executeblock}{duration of the execution of all blocks}
+    \item{makepartners}{duration of the creation of merge partners}
+    \item{reduction}{duration of all reduction rounds}
+    \item{output}{duration of writing result file (see note 2 below)}
+    \item{total}{total running duration}
 }
+
+Note 1: Only the local group leaders calculate block configurations, so
+for most ranks the `calcbc` value will be close to zero. For these ranks,
+the `broadcast` time will include the time spent waiting for the group
+leaders to do their calculations of block configurations.
+
+Note 2: Only rank 0 writes the output file; others ranks should have close
+to zero time for `output`.
+
+Note 3: The timingdata files are written *after* the finish timestamp is
+recorded.
 }

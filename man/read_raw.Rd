@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_raw.R
 \name{read_raw}
 \alias{read_raw}
-\title{Create a tibble from a single rank timing file}
+\title{Create a tibble from a single rank timing file.}
 \usage{
 read_raw(fname)
 }
@@ -13,5 +13,6 @@ read_raw(fname)
 a data.frame
 }
 \description{
-Create a tibble from a single rank timing file
+See the documentation for read_raw_dataframes for a description of the
+resulting dataframe.
 }
