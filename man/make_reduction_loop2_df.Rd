@@ -20,13 +20,13 @@ Each row in the dataframe corresponds to an iteration in the enqueue loop.
 The dataframe columns are:
 \describe{
     \item{rank}{the MPI rank on which the loop was executed}
-    \item{start}{the time at the start of the loop}
-    \item{end}{the time after the enqueuing}
+    \item{bid}{the id of the block on which reduceData was called}
+    \item{round}{the reduction round}
     \item{idx}{the loop index for this iteration}
     \item{target_bid}{the id of the block to which the enqueued data are sent}
     \item{nenq}{number of slices enqueued this iteration}
-    \item{bid}{the id of the block on which reduceData was called}
-    \item{round}{the reduction round}
+    \item{start}{the time at the start of the loop}
+    \item{end}{the time after the enqueuing}
     \item{t_tot}{total duration of the loop}
 }
 }

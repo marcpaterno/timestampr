@@ -7,18 +7,17 @@
 #' The dataframe columns are:
 #' \describe{
 #'    \item{rank}{the MPI rank on which the call was made}
-#'    \item{start}{time at start of the rank}
 #'    \item{precr}{timestamp before create_records call}
-#'    \item{postcr}{timestamp after create_records call}
 #'    \item{postfr}{timestamp after records have been filled}
+#'    \item{postcr}{timestamp after create_records call}
 #'    \item{postps}{timestamp after slices have been filter for selection}
+#'    \item{evt}{id of this event}
+#'    \item{nslices}{number of slices in this event}
+#'    \item{nbytes}{sum of the size of records (in bytes) of this event}
+#'    \item{bid}{id of block which arried this event}
 #'    \item{load}{duration of loading data from HEPnOS (ms)}
 #'    \item{rec}{duration of record creation (ms)}
 #'    \item{filt}{duration of filter criterion application (ms)}
-#'    \item{evt}{id of this event}
-#'    \item{bid}{id of block which arried this event}
-#'    \item{nbytes}{sum of the size of records (in bytes) of this event}
-#'    \item{nslices}{number of slices in this event}
 #' }
 #'
 #' @param dx  an eventselection raw dataframe
@@ -206,14 +205,14 @@ make_reduction_phase_df <- function(dx)
 #' The dataframe columns are:
 #' \describe{
 #'     \item{rank}{the MPI rank on which the loop was executed}
-#'     \item{start}{the time at the start of the loop}
-#'     \item{med}{the time after dequeuing slices but before reduction}
-#'     \item{end}{the time after the reduction}
+#'     \item{bid}{the id of the block on which reduceData was called}
+#'     \item{round}{the reduction round}
 #'     \item{idx}{the loop index for this iteration}
 #'     \item{incoming_bid}{the id of the incoming block on this iteration}
 #'     \item{ndq}{number of slices dequeued this iteration}
-#'     \item{bid}{the id of the block on which reduceData was called}
-#'     \item{round}{the reduction round}
+#'     \item{start}{the time at the start of the loop}
+#'     \item{med}{the time after dequeuing slices but before reduction}
+#'     \item{end}{the time after the reduction}
 #'     \item{t_dq}{duration of dequeue call}
 #'     \item{t_red}{duration of the reduce call}
 #'     \item{t_tot}{total duration of the loop}
@@ -291,13 +290,13 @@ make_reduction_loop1_df <- function(dx)
 #' The dataframe columns are:
 #' \describe{
 #'     \item{rank}{the MPI rank on which the loop was executed}
-#'     \item{start}{the time at the start of the loop}
-#'     \item{end}{the time after the enqueuing}
+#'     \item{bid}{the id of the block on which reduceData was called}
+#'     \item{round}{the reduction round}
 #'     \item{idx}{the loop index for this iteration}
 #'     \item{target_bid}{the id of the block to which the enqueued data are sent}
 #'     \item{nenq}{number of slices enqueued this iteration}
-#'     \item{bid}{the id of the block on which reduceData was called}
-#'     \item{round}{the reduction round}
+#'     \item{start}{the time at the start of the loop}
+#'     \item{end}{the time after the enqueuing}
 #'     \item{t_tot}{total duration of the loop}
 #' }
 #'

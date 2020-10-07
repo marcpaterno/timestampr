@@ -20,17 +20,16 @@ processed.
 The dataframe columns are:
 \describe{
    \item{rank}{the MPI rank on which the call was made}
-   \item{start}{time at start of the rank}
    \item{precr}{timestamp before create_records call}
-   \item{postcr}{timestamp after create_records call}
    \item{postfr}{timestamp after records have been filled}
+   \item{postcr}{timestamp after create_records call}
    \item{postps}{timestamp after slices have been filter for selection}
+   \item{evt}{id of this event}
+   \item{nslices}{number of slices in this event}
+   \item{nbytes}{sum of the size of records (in bytes) of this event}
+   \item{bid}{id of block which arried this event}
    \item{load}{duration of loading data from HEPnOS (ms)}
    \item{rec}{duration of record creation (ms)}
    \item{filt}{duration of filter criterion application (ms)}
-   \item{evt}{id of this event}
-   \item{bid}{id of block which arried this event}
-   \item{nbytes}{sum of the size of records (in bytes) of this event}
-   \item{nslices}{number of slices in this event}
 }
 }
