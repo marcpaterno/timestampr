@@ -7,6 +7,7 @@
 #' \describe{
 #'     \item{ts}{the MPI timestamp recorded for this "event".}
 #'     \item{data}{a context-dependent (integer) data value. See notes below.}
+#'     \item{sdata*}{an optional context-dependent (string) data value. See notes below.}
 #'     \item{step}{the kind of "event" to which this record corresponds.}
 #'     \item{rank}{the MPI rank in which this "event" was recorded.}
 #' }
@@ -15,6 +16,15 @@
 #' recorded. See the documentation for the functions make_events_df,
 #' make_global_df, make_reduction_phase_df, make_reduction_loop1_df, and
 #' make_reduction_loop2_df for the details.
+#'
+#' The meaning of each "sdata" value depends on the "step" for which it is
+#' recorded.
+#'
+#' Versioning information:
+#'   version 1 raw data files contain 4 columns; the sdata column always contains
+#'       empty strings.
+#'   version 2 raw data files contain 5 columns; the sdata column sometimes
+#'       contains non-empty strings.
 #'
 #' @param fileglob a glob pattern identifying all the files to read
 #' @param use_parallel force use of parallel reading
