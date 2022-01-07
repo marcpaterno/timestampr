@@ -16,3 +16,7 @@ a data.frame
 See the documentation for read_raw_dataframes for a description of the
 resulting dataframe.
 }
+\details{
+Note that an empty file will yield the most recent version dataframe, which
+may not be expected by older code using `timestampr`.
+}

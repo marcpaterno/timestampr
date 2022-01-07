@@ -2,9 +2,11 @@
 
 export(make_events_df)
 export(make_global_df)
+export(make_rank_df)
 export(make_reduction_loop1_df)
 export(make_reduction_loop2_df)
 export(make_reduction_phase_df)
+export(raw_data_version)
 export(read_raw)
 export(read_raw_dataframes)
 importFrom(magrittr,"%>%")

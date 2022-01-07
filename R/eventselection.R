@@ -136,6 +136,47 @@ make_global_df <- function(dx)
   globals
 }
 
+
+#' Extract the names of steps appearing once per rank
+#'
+#' @param dx an eventselection raw dataframe
+#' @param id_tag the name of a step known to appear once per rank
+#'
+#' @return character vector containing the names
+#'
+extract_rank_step_names <- function(dx, id_tag = "start")
+{
+  checkmate::assertScalar(id_tag)
+  checkmate::assertString(id_tag)
+  checkmate::assertTibble(dx)
+  name_frequencies <- dplyr::count(dx, .data$step)
+  n_ranks <-  dplyr::filter(name_frequencies, .data$step == id_tag)[["n"]]
+  if (is.null(n_ranks))
+    stop(sprintf("id_tag %s not found in steps in dataframe", id_tag))
+  dplyr::filter(name_frequencies, .data$n == n_ranks) %>%
+    dplyr::pull(.data$step)
+}
+
+#' Create a dataframe of all the quantities recorded only once per rank.
+#'
+#' @param dx an eventselection raw dataframe
+#'
+#' @return a tibble containing once-per-rank data
+#' @export
+#' @importFrom rlang .data
+#' @importFrom magrittr %>%
+#'
+make_rank_df <- function(dx)
+{
+  rank_step_names <- extract_rank_step_names(dx, "start")
+  dplyr::filter(dx, .data$step %in% rank_step_names) %>%
+    dplyr::select(-c(.data$data, .data$sdata)) %>%
+    tidyr::pivot_wider(names_from = .data$step, values_from = .data$ts) %>%
+    dplyr::arrange(rank)
+}
+
+
+
 #' Extract reduction round information from an eventselection dataframe.
 #'
 #' Each row in the returned dataframe corresponds to one call to the reduceData
